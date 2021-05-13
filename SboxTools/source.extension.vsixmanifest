@@ -7,7 +7,7 @@
         <License>LICENSE.txt</License>
         <Icon>Resources\Icon.ico</Icon>
         <PreviewImage>Resources\Preview.jpg</PreviewImage>
-        <Tags>s&amp;box;facepunch;sandbox</Tags>
+        <Tags>s&amp;box;facepunch;sandbox;sbox</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
