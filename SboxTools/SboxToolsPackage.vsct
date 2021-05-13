@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+	<Extern href="stdidcmd.h" />
+
+	<!--This header contains the command ids for the menus provided by the shell. -->
+	<Extern href="vsshlids.h" />
+
+	<Commands package="guidSboxToolsPackage">
+		<Buttons>
+			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleWindowCommandId" priority="0x0100" type="Button">
+				<Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
+				<Icon guid="guidImages" id="bmpSbox" />
+				<Strings>
+					<ButtonText>s&amp;&amp;box Console</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleConnectCommandId" priority="0x0100" type="Button">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Icon guid="guidImages" id="bmpOff" />
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<Strings>
+					<ButtonText>Connect</ButtonText>
+				</Strings>
+			</Button>
+
+			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleDisconnectCommandId" priority="0x0100" type="Button">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Icon guid="guidImages" id="bmpOn" />
+				<CommandFlag>DynamicVisibility</CommandFlag>
+				<CommandFlag>DefaultInvisible</CommandFlag>
+				<Strings>
+					<ButtonText>Disconnect</ButtonText>
+				</Strings>
+			</Button>
+		</Buttons>
+
+		<Bitmaps>
+			<Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpSbox, bmpOn, bmpOff" />
+		</Bitmaps>
+
+		<Menus>
+			<Menu guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" type="ToolWindowToolbar">
+				<CommandFlag>DefaultDocked</CommandFlag>
+				<Strings>
+					<ButtonText>Test Toolbar</ButtonText>
+					<CommandName>Test Toolbar</CommandName>
+				</Strings>
+			</Menu>
+		</Menus>
+
+		<Groups>
+			<Group guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
+		</Groups>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="guidSboxToolsPackage" value="{be08f061-729b-4f5a-b06d-d59c9bbe280d}" />
+
+		<GuidSymbol name="guidSboxToolsPackageCmdSet" value="{748c47d3-5b7f-4990-8001-7176ea6fa267}">
+			<IDSymbol name="SboxConsoleWindowCommandId" value="0x0100" />
+			<IDSymbol name="SboxConsoleConnectCommandId" value="0x0101" />
+			<IDSymbol name="SboxConsoleDisconnectCommandId" value="0x0102" />
+			<IDSymbol name="SboxConsoleToolbar" value="0x1000" />
+			<IDSymbol name="SboxConsoleToolbarGroup" value="0x1050" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImages" value="{8930bbf9-09dc-4a91-9d44-12ed7535a845}">
+			<IDSymbol name="bmpSbox" value="1" />
+			<IDSymbol name="bmpOn" value="2" />
+			<IDSymbol name="bmpOff" value="3" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>
