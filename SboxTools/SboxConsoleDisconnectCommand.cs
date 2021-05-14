@@ -1,12 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using EnvDTE80;
 using Task = System.Threading.Tasks.Task;
 
 namespace SboxTools
@@ -103,11 +97,6 @@ namespace SboxTools
             if (sender is OleMenuCommand myCommand)
             {
                 myCommand.Visible = SboxConsoleWindow.Instance != null && SboxConsoleWindow.Instance.IsConnected;
-
-                if (SboxConsoleConnectCommand.Instance != null)
-                {
-                    //SboxConsoleConnectCommand.Instance.Button.Visible = !myCommand.Visible;
-                }
             }
         }
     }

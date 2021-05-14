@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.VisualStudio.Threading;
 
 namespace SboxTools
 {

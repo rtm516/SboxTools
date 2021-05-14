@@ -97,11 +97,6 @@ namespace SboxTools
             if (sender is OleMenuCommand myCommand)
             {
                 myCommand.Visible = SboxConsoleWindow.Instance == null || !SboxConsoleWindow.Instance.IsConnected;
-
-                if (SboxConsoleDisconnectCommand.Instance != null)
-                {
-                    //SboxConsoleDisconnectCommand.Instance.Button.Visible = !myCommand.Visible;
-                }
             }
         }
     }
