@@ -63,6 +63,11 @@
         <Style TargetType="ScrollViewer">
             <Setter Property="Background" Value="#171819"/>
         </Style>
+
+        <ContextMenu x:Key="LogContextMenu">
+            <MenuItem Header="Goto" Click="OpenStackTrace" />
+            <MenuItem Header="Copy" Click="CopyLine" />
+        </ContextMenu>
     </UserControl.Resources>
 
     <DockPanel>

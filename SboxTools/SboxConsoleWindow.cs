@@ -122,11 +122,12 @@ namespace SboxTools
             if (output.Type == "ConsoleOutput")
             {
                 ConsoleOutput consoleOutput = JsonConvert.DeserializeObject<ConsoleOutput>(output.Data);
-                AddLine(consoleOutput.Msg, DateTime.Now, consoleOutput.Level, consoleOutput.Logger, consoleOutput.Stack);
+                AddLine(consoleOutput, DateTime.Now);
             }
         }
 
-        private void AddLine(string msg, DateTime now, string level, string logger, string stack)
+        // TODO: Remove these extra args as its super messy
+        private void AddLine(ConsoleOutput consoleOutput, DateTime now)
         {
             // Run back on UI thread
             WindowControl.Dispatcher.BeginInvoke(new Action(() =>
@@ -134,6 +135,7 @@ namespace SboxTools
                 bool autoScroll = LogScroll.VerticalOffset == LogScroll.ScrollableHeight;
 
                 DockPanel row = new DockPanel();
+                row.DataContext = consoleOutput;
 
                 TextBlock timeText = new TextBlock();
                 timeText.Text = now.ToString("HH:mm:ss");
@@ -141,14 +143,15 @@ namespace SboxTools
                 row.Children.Add(timeText);
 
                 TextBlock loggerText = new TextBlock();
-                loggerText.Text = logger.ToUpper();
+                loggerText.Text = consoleOutput.Logger.ToUpper();
                 loggerText.MinWidth = 140;
                 loggerText.Style = (Style)WindowControl.Resources["TextBlockLogger"];
                 row.Children.Add(loggerText);
 
                 TextBlock msgText = new TextBlock();
-                msgText.Text = msg;
-                msgText.Style = (Style)WindowControl.Resources["TextBlock" + level.FirstCharToUpper()];
+                msgText.Text = consoleOutput.Msg;
+                msgText.Style = (Style)WindowControl.Resources["TextBlock" + consoleOutput.Level.FirstCharToUpper()];
+                msgText.ContextMenu = (ContextMenu)WindowControl.Resources["LogContextMenu"];
                 row.Children.Add(msgText);
 
                 LogPanel.Children.Add(row);
