@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'src/**'
-      - '!src/.editorconfig'
 
 jobs:
   build-extension:
