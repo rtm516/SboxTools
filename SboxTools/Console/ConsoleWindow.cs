@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Shell;
@@ -28,11 +29,7 @@ namespace SboxTools.Console
     [Guid("f097cd44-1007-4923-abe4-b10daa88b6ca")]
     public class ConsoleWindow : ToolWindowPane
     {
-        public static ConsoleWindow Instance
-        {
-            get;
-            private set;
-        }
+        public static ConsoleWindow Instance { get; private set; }
 
         private ClientWebSocket WebSocket;
         private ConsoleWindowControl WindowControl;
@@ -41,10 +38,7 @@ namespace SboxTools.Console
 
         public bool IsConnected
         {
-            get
-            {
-                return WebSocket != null && WebSocket.State == WebSocketState.Open;
-            }
+            get { return WebSocket != null && WebSocket.State == WebSocketState.Open; }
         }
 
         /// <summary>
@@ -71,17 +65,17 @@ namespace SboxTools.Console
 
             WebSocket = new ClientWebSocket();
             LogPanel.Children.Clear();
-            WebSocket.ConnectAsync(new Uri("ws://127.0.0.1:29016"), CancellationToken.None).ContinueWith((t) => System.Threading.Tasks.Task.Run(RecvLoop));
+            _ = WebSocket.ConnectAsync(new Uri("ws://127.0.0.1:29016"), CancellationToken.None).ContinueWith((t) => System.Threading.Tasks.Task.Run(RecvLoopAsync), CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         }
 
         public void Disconnect()
         {
             if (WebSocket != null && WebSocket.State != WebSocketState.Open) return;
 
-            WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None).ContinueWith(t => WebSocket = null);
+            _ = WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None).ContinueWith(t => WebSocket = null, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         }
 
-        private async System.Threading.Tasks.Task RecvLoop()
+        private async System.Threading.Tasks.Task RecvLoopAsync()
         {
             ArraySegment<Byte> buffer = new ArraySegment<byte>(new byte[8 * 1024]);
             WebSocketReceiveResult result;
@@ -94,9 +88,8 @@ namespace SboxTools.Console
                     do
                     {
                         result = await WebSocket.ReceiveAsync(buffer, CancellationToken.None);
-                        ms.Write(buffer.Array, buffer.Offset, result.Count);
-                    }
-                    while (!result.EndOfMessage);
+                        await ms.WriteAsync(buffer.Array, buffer.Offset, result.Count);
+                    } while (!result.EndOfMessage);
 
                     if (result.MessageType != WebSocketMessageType.Text) continue;
 
@@ -106,7 +99,7 @@ namespace SboxTools.Console
                     {
                         Output output = JsonConvert.DeserializeObject<Output>(await reader.ReadToEndAsync());
 
-                        await HandleOutput(output);
+                        HandleOutput(output);
                     }
                 }
             }
@@ -117,7 +110,7 @@ namespace SboxTools.Console
             }
         }
 
-        private async System.Threading.Tasks.Task HandleOutput(Output output)
+        private void HandleOutput(Output output)
         {
             if (output.Type == "ConsoleOutput")
             {
@@ -130,8 +123,9 @@ namespace SboxTools.Console
         private void AddLine(ConsoleOutput consoleOutput, DateTime now)
         {
             // Run back on UI thread
-            WindowControl.Dispatcher.BeginInvoke(new Action(() =>
-            {
+            ThreadHelper.JoinableTaskFactory.Run(async delegate {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                 bool autoScroll = LogScroll.VerticalOffset == LogScroll.ScrollableHeight;
 
                 DockPanel row = new DockPanel();
@@ -144,7 +138,7 @@ namespace SboxTools.Console
                     case "error":
                         visible = ToggleErrorCommand.Instance.Button.Checked;
                         break;
-                        
+
                     case "warn":
                         visible = ToggleWarnCommand.Instance.Button.Checked;
                         break;
@@ -162,19 +156,19 @@ namespace SboxTools.Console
 
                 TextBlock timeText = new TextBlock();
                 timeText.Text = now.ToString("HH:mm:ss");
-                timeText.Style = (Style)WindowControl.Resources["TextBlockTime"];
+                timeText.Style = (Style) WindowControl.Resources["TextBlockTime"];
                 row.Children.Add(timeText);
 
                 TextBlock loggerText = new TextBlock();
                 loggerText.Text = consoleOutput.Logger.ToUpper();
                 loggerText.MinWidth = 140;
-                loggerText.Style = (Style)WindowControl.Resources["TextBlockLogger"];
+                loggerText.Style = (Style) WindowControl.Resources["TextBlockLogger"];
                 row.Children.Add(loggerText);
 
                 TextBlock msgText = new TextBlock();
                 msgText.Text = consoleOutput.Msg;
-                msgText.Style = (Style)WindowControl.Resources["TextBlock" + consoleOutput.Level.FirstCharToUpper()];
-                msgText.ContextMenu = (ContextMenu)WindowControl.Resources["LogContextMenu"];
+                msgText.Style = (Style) WindowControl.Resources["TextBlock" + consoleOutput.Level.FirstCharToUpper()];
+                msgText.ContextMenu = (ContextMenu) WindowControl.Resources["LogContextMenu"];
                 row.Children.Add(msgText);
 
                 LogPanel.Children.Add(row);
@@ -183,8 +177,7 @@ namespace SboxTools.Console
                 {
                     LogScroll.ScrollToEnd();
                 }
-            }), null);
-
+            });
         }
     }
 }
