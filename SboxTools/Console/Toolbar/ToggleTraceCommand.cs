@@ -8,6 +8,15 @@ namespace SboxTools.Console.Toolbar
 
         public override string Level => "trace";
 
-        public ToggleTraceCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService) { }
+        public static ToggleTraceCommand Instance
+        {
+            get;
+            private set;
+        }
+
+        public ToggleTraceCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        {
+            Instance = this;
+        }
     }
 }

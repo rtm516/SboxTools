@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
+using SboxTools.Console.Toolbar;
 using SboxTools.Types;
 
 namespace SboxTools.Console
@@ -135,6 +136,29 @@ namespace SboxTools.Console
 
                 DockPanel row = new DockPanel();
                 row.DataContext = consoleOutput;
+
+                // Change visibility based on active filters
+                bool visible = true;
+                switch (consoleOutput.Level)
+                {
+                    case "error":
+                        visible = ToggleErrorCommand.Instance.Button.Checked;
+                        break;
+                        
+                    case "warn":
+                        visible = ToggleWarnCommand.Instance.Button.Checked;
+                        break;
+
+                    case "info":
+                        visible = ToggleInfoCommand.Instance.Button.Checked;
+                        break;
+
+                    case "trace":
+                        visible = ToggleTraceCommand.Instance.Button.Checked;
+                        break;
+                }
+
+                row.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
 
                 TextBlock timeText = new TextBlock();
                 timeText.Text = now.ToString("HH:mm:ss");

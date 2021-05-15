@@ -10,11 +10,11 @@
              d:DesignHeight="200" d:DesignWidth="600">
 
     <UserControl.Resources>
-        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockBase}" />
         <Style TargetType="TextBlock" x:Key="TextBlockBase">
             <Setter Property="Margin" Value="0 1 0 0"/>
             <Setter Property="FontFamily" Value="Consolas"/>
         </Style>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockBase}" />
 
         <Style TargetType="TextBlock" x:Key="TextBlockHeader" BasedOn="{StaticResource TextBlockBase}">
             <Setter Property="Padding" Value="5 0"/>

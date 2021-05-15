@@ -30,7 +30,7 @@ namespace SboxTools.Console.Toolbar
 
         public virtual string Level { get; }
 
-        private readonly OleMenuCommand _button;
+        public readonly OleMenuCommand Button;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectCommand"/> class.
@@ -44,18 +44,9 @@ namespace SboxTools.Console.Toolbar
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            _button = new OleMenuCommand(this.Execute, menuCommandID);
-            _button.Checked = true;
-            commandService.AddCommand(_button);
-        }
-
-        /// <summary>
-        /// Gets the instance of the command.
-        /// </summary>
-        public static ToggleCommand Instance
-        {
-            get;
-            private set;
+            Button = new OleMenuCommand(this.Execute, menuCommandID);
+            Button.Checked = true;
+            commandService.AddCommand(Button);
         }
 
         /// <summary>
@@ -80,7 +71,7 @@ namespace SboxTools.Console.Toolbar
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = (T) Activator.CreateInstance(typeof(T), (AsyncPackage)package, commandService);
+            Activator.CreateInstance(typeof(T), (AsyncPackage)package, commandService);
         }
 
         /// <summary>
@@ -94,13 +85,13 @@ namespace SboxTools.Console.Toolbar
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            _button.Checked = !_button.Checked;
+            Button.Checked = !Button.Checked;
 
             foreach (DockPanel logLine in ConsoleWindow.Instance.LogPanel.Children)
             {
                 if (((ConsoleOutput) logLine.DataContext).Level == Level)
                 {
-                    logLine.Visibility = _button.Checked ? Visibility.Visible : Visibility.Collapsed;
+                    logLine.Visibility = Button.Checked ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }

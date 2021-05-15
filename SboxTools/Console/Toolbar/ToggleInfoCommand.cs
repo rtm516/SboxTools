@@ -8,6 +8,15 @@ namespace SboxTools.Console.Toolbar
 
         public override string Level => "info";
 
-        public ToggleInfoCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService) { }
+        public static ToggleInfoCommand Instance
+        {
+            get;
+            private set;
+        }
+
+        public ToggleInfoCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        {
+            Instance = this;
+        }
     }
 }

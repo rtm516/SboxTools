@@ -8,6 +8,15 @@ namespace SboxTools.Console.Toolbar
 
         public override string Level => "warn";
 
-        public ToggleWarnCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService) { }
+        public static ToggleWarnCommand Instance
+        {
+            get;
+            private set;
+        }
+
+        public ToggleWarnCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        {
+            Instance = this;
+        }
     }
 }

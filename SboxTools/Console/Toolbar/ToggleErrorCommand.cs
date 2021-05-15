@@ -8,6 +8,15 @@ namespace SboxTools.Console.Toolbar
 
         public override string Level => "error";
 
-        public ToggleErrorCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService) { }
+        public static ToggleErrorCommand Instance
+        {
+            get;
+            private set;
+        }
+
+        public ToggleErrorCommand(AsyncPackage package, OleMenuCommandService commandService) : base(package, commandService)
+        {
+            Instance = this;
+        }
     }
 }
