@@ -1,19 +1,22 @@
-﻿using Microsoft.VisualStudio.Shell;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
+using System.Windows;
+using System.Windows.Controls;
+using Microsoft.VisualStudio.Shell;
+using SboxTools.Types;
 using Task = System.Threading.Tasks.Task;
 
-namespace SboxTools
+namespace SboxTools.Console.Toolbar
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class SboxConsoleDisconnectCommand
+    internal class ToggleCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 0x0102;
+        public virtual int CommandId { get; }
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -25,29 +28,31 @@ namespace SboxTools
         /// </summary>
         private readonly AsyncPackage package;
 
-        public OleMenuCommand Button;
+        public virtual string Level { get; }
+
+        private readonly OleMenuCommand _button;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SboxConsoleConnectCommand"/> class.
+        /// Initializes a new instance of the <see cref="ConnectCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private SboxConsoleDisconnectCommand(AsyncPackage package, OleMenuCommandService commandService)
+        internal ToggleCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            Button = new OleMenuCommand(this.Execute, menuCommandID);
-            Button.BeforeQueryStatus += OnBeforeQueryStatus;
-            commandService.AddCommand(Button);
+            _button = new OleMenuCommand(this.Execute, menuCommandID);
+            _button.Checked = true;
+            commandService.AddCommand(_button);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static SboxConsoleDisconnectCommand Instance
+        public static ToggleCommand Instance
         {
             get;
             private set;
@@ -68,14 +73,14 @@ namespace SboxTools
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync(AsyncPackage package)
+        public static async Task InitializeAsync<T>(AsyncPackage package) where T : ToggleCommand
         {
-            // Switch to the main thread - the call to AddCommand in SboxConsoleConnectCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in ConnectCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new SboxConsoleDisconnectCommand(package, commandService);
+            Instance = (T) Activator.CreateInstance(typeof(T), (AsyncPackage)package, commandService);
         }
 
         /// <summary>
@@ -89,14 +94,14 @@ namespace SboxTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            SboxConsoleWindow.Instance.Disconnect();
-        }
+            _button.Checked = !_button.Checked;
 
-        private void OnBeforeQueryStatus(object sender, EventArgs e)
-        {
-            if (sender is OleMenuCommand myCommand)
+            foreach (DockPanel logLine in ConsoleWindow.Instance.LogPanel.Children)
             {
-                myCommand.Visible = SboxConsoleWindow.Instance != null && SboxConsoleWindow.Instance.IsConnected;
+                if (((ConsoleOutput) logLine.DataContext).Level == Level)
+                {
+                    logLine.Visibility = _button.Checked ? Visibility.Visible : Visibility.Collapsed;
+                }
             }
         }
     }

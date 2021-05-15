@@ -6,17 +6,17 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using SboxTools.Types;
 
-namespace SboxTools
+namespace SboxTools.Console
 {
     /// <summary>
-    /// Interaction logic for SboxConsoleWindowControl.
+    /// Interaction logic for ConsoleWindowControl.
     /// </summary>
-    public partial class SboxConsoleWindowControl : UserControl
+    public partial class ConsoleWindowControl : UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SboxConsoleWindowControl"/> class.
+        /// Initializes a new instance of the <see cref="ConsoleWindowControl"/> class.
         /// </summary>
-        public SboxConsoleWindowControl()
+        public ConsoleWindowControl()
         {
             this.InitializeComponent();
         }

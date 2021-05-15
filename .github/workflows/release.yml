@@ -38,7 +38,7 @@ jobs:
     - name: Calculate next version
       uses: cezarypiatek/NextVersionGeneratorAction@0.4
       with:
-        minor-pattern: '^Add\b'
+        minor-pattern: '\bAdd\b'
         patch-pattern: '.*'
         output-to-env-variable: 'Version'
 

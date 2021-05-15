@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace SboxTools
+namespace SboxTools.Console
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class SboxConsoleWindowCommand
+    internal sealed class ConsoleWindowCommand
     {
         /// <summary>
         /// Command ID.
@@ -27,12 +27,12 @@ namespace SboxTools
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SboxConsoleWindowCommand"/> class.
+        /// Initializes a new instance of the <see cref="ConsoleWindowCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private SboxConsoleWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private ConsoleWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -45,7 +45,7 @@ namespace SboxTools
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static SboxConsoleWindowCommand Instance
+        public static ConsoleWindowCommand Instance
         {
             get;
             private set;
@@ -68,12 +68,12 @@ namespace SboxTools
         /// <param name="package">Owner package, not null.</param>
         public static async Task InitializeAsync(AsyncPackage package)
         {
-            // Switch to the main thread - the call to AddCommand in SboxConsoleWindowCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in ConsoleWindowCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new SboxConsoleWindowCommand(package, commandService);
+            Instance = new ConsoleWindowCommand(package, commandService);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace SboxTools
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            ToolWindowPane window = this.package.FindToolWindow(typeof(SboxConsoleWindow), 0, true);
+            ToolWindowPane window = this.package.FindToolWindow(typeof(ConsoleWindow), 0, true);
             if ((null == window) || (null == window.Frame))
             {
                 throw new NotSupportedException("Cannot create tool window");

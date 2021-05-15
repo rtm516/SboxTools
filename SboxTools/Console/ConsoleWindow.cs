@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Newtonsoft.Json;
-using SboxTools.Types;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Net.WebSockets;
@@ -10,8 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.VisualStudio.Shell;
+using Newtonsoft.Json;
+using SboxTools.Types;
 
-namespace SboxTools
+namespace SboxTools.Console
 {
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.
@@ -25,18 +25,18 @@ namespace SboxTools
     /// </para>
     /// </remarks>
     [Guid("f097cd44-1007-4923-abe4-b10daa88b6ca")]
-    public class SboxConsoleWindow : ToolWindowPane
+    public class ConsoleWindow : ToolWindowPane
     {
-        public static SboxConsoleWindow Instance
+        public static ConsoleWindow Instance
         {
             get;
             private set;
         }
 
         private ClientWebSocket WebSocket;
-        private SboxConsoleWindowControl WindowControl;
+        private ConsoleWindowControl WindowControl;
         private ScrollViewer LogScroll;
-        private StackPanel LogPanel;
+        public StackPanel LogPanel;
 
         public bool IsConnected
         {
@@ -47,15 +47,15 @@ namespace SboxTools
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SboxConsoleWindow"/> class.
+        /// Initializes a new instance of the <see cref="ConsoleWindow"/> class.
         /// </summary>
-        public SboxConsoleWindow() : base(null)
+        public ConsoleWindow() : base(null)
         {
             Instance = this;
 
             this.Caption = "s&box Console";
 
-            WindowControl = new SboxConsoleWindowControl();
+            WindowControl = new ConsoleWindowControl();
             this.Content = WindowControl;
 
             this.ToolBar = new CommandID(new Guid(SboxToolsPackage.guidSboxToolsPackageCmdSet), SboxToolsPackage.SboxConsoleToolbar);

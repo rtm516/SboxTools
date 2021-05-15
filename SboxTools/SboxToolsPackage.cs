@@ -2,6 +2,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using SboxTools.Console;
+using SboxTools.Console.Toolbar;
 using Task = System.Threading.Tasks.Task;
 
 namespace SboxTools
@@ -26,7 +28,7 @@ namespace SboxTools
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(SboxToolsPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(SboxConsoleWindow), Orientation = ToolWindowOrientation.Right, Window = EnvDTE.Constants.vsWindowKindOutput, Style = VsDockStyle.Tabbed)]
+    [ProvideToolWindow(typeof(ConsoleWindow), Orientation = ToolWindowOrientation.Right, Window = EnvDTE.Constants.vsWindowKindOutput, Style = VsDockStyle.Tabbed)]
     public sealed class SboxToolsPackage : AsyncPackage
     {
         /// <summary>
@@ -51,9 +53,14 @@ namespace SboxTools
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await SboxConsoleWindowCommand.InitializeAsync(this);
-            await SboxConsoleConnectCommand.InitializeAsync(this);
-            await SboxConsoleDisconnectCommand.InitializeAsync(this);
+            await ConsoleWindowCommand.InitializeAsync(this);
+
+            await ConnectCommand.InitializeAsync(this);
+            await DisconnectCommand.InitializeAsync(this);
+            await ToggleCommand.InitializeAsync<ToggleErrorCommand>(this);
+            await ToggleCommand.InitializeAsync<ToggleWarnCommand>(this);
+            await ToggleCommand.InitializeAsync<ToggleInfoCommand>(this);
+            await ToggleCommand.InitializeAsync<ToggleTraceCommand>(this);
         }
 
         #endregion
