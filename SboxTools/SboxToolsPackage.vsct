@@ -20,7 +20,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleConnectCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarConnectionGroup" />
 				<Icon guid="guidImages" id="bmpOff" />
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Strings>
@@ -29,7 +29,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleDisconnectCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarConnectionGroup" />
 				<Icon guid="guidImages" id="bmpOn" />
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<CommandFlag>DefaultInvisible</CommandFlag>
@@ -39,7 +39,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleErrorCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarErrorGroup" />
 				<Icon guid="ImageCatalogGuid" id="StatusError" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<CommandFlag>IconAndText</CommandFlag>
@@ -49,7 +49,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleWarnCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarWarnGroup" />
 				<Icon guid="ImageCatalogGuid" id="StatusWarning" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<CommandFlag>IconAndText</CommandFlag>
@@ -59,7 +59,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleInfoCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarInfoGroup" />
 				<Icon guid="ImageCatalogGuid" id="StatusInformation" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<CommandFlag>IconAndText</CommandFlag>
@@ -69,7 +69,7 @@
 			</Button>
 
 			<Button guid="guidSboxToolsPackageCmdSet" id="SboxConsoleTraceCommandId" priority="0x0100" type="Button">
-				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" />
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarTraceGroup" />
 				<Icon guid="ImageCatalogGuid" id="StatusInformationOutline" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<CommandFlag>IconAndText</CommandFlag>
@@ -94,7 +94,19 @@
 		</Menus>
 
 		<Groups>
-			<Group guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbarGroup" priority="0x0000">
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarConnectionGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarErrorGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarWarnGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarInfoGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarTraceGroup" priority="0x0000">
 				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
 			</Group>
 		</Groups>
@@ -114,7 +126,11 @@
 			<IDSymbol name="SboxConsoleTraceCommandId" value="0x0106" />
 
 			<IDSymbol name="SboxConsoleToolbar" value="0x1000" />
-			<IDSymbol name="SboxConsoleToolbarGroup" value="0x1050" />
+			<IDSymbol name="ToolbarConnectionGroup" value="0x1050" />
+			<IDSymbol name="ToolbarErrorGroup" value="0x1051" />
+			<IDSymbol name="ToolbarWarnGroup" value="0x1052" />
+			<IDSymbol name="ToolbarInfoGroup" value="0x1053" />
+			<IDSymbol name="ToolbarTraceGroup" value="0x1054" />
 		</GuidSymbol>
 
 		<GuidSymbol name="guidImages" value="{8930bbf9-09dc-4a91-9d44-12ed7535a845}">
