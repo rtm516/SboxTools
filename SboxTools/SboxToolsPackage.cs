@@ -63,6 +63,7 @@ namespace SboxTools
             await ToggleCommand.InitializeAsync<ToggleTraceCommand>(this);
             await LoggerComboCommand.InitializeAsync(this);
             await LoggerComboListCommand.InitializeAsync(this);
+            await SearchComboCommand.InitializeAsync(this);
         }
 
         #endregion

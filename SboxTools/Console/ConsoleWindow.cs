@@ -196,9 +196,16 @@ namespace SboxTools.Console
                     break;
             }
 
+            // Check logger filter
             if (visible && LoggerComboCommand.Instance.CurrentChoice != "All")
             {
                 visible = consoleOutput.Logger == LoggerComboCommand.Instance.CurrentChoice;
+            }
+
+            // Check search filter
+            if (visible && SearchComboCommand.Instance.CurrentSearch != "")
+            {
+                visible = consoleOutput.Msg.Contains(SearchComboCommand.Instance.CurrentSearch);
             }
 
             return visible;
