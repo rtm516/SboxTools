@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Design;
-using System.Windows;
-using System.Windows.Controls;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
-using SboxTools.Types;
 using Task = System.Threading.Tasks.Task;
 
 namespace SboxTools.Console.Toolbar
@@ -11,12 +9,12 @@ namespace SboxTools.Console.Toolbar
     /// <summary>
     /// Command handler
     /// </summary>
-    internal class ToggleCommand
+    internal sealed class LoggerComboCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public virtual int CommandId { get; }
+        public const int CommandId = 0x0107;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -28,9 +26,7 @@ namespace SboxTools.Console.Toolbar
         /// </summary>
         private readonly AsyncPackage package;
 
-        public virtual string Level { get; }
-
-        public readonly OleMenuCommand Button;
+        public string CurrentChoice = "All";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectCommand"/> class.
@@ -38,15 +34,23 @@ namespace SboxTools.Console.Toolbar
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        internal ToggleCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private LoggerComboCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            Button = new OleMenuCommand(this.Execute, menuCommandID);
-            Button.Checked = true;
-            commandService.AddCommand(Button);
+            var button = new OleMenuCommand(this.Execute, menuCommandID);
+            commandService.AddCommand(button);
+        }
+
+        /// <summary>
+        /// Gets the instance of the command.
+        /// </summary>
+        public static LoggerComboCommand Instance
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -64,14 +68,14 @@ namespace SboxTools.Console.Toolbar
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static async Task InitializeAsync<T>(AsyncPackage package) where T : ToggleCommand
+        public static async Task InitializeAsync(AsyncPackage package)
         {
             // Switch to the main thread - the call to AddCommand in ConnectCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Activator.CreateInstance(typeof(T), (AsyncPackage)package, commandService);
+            Instance = new LoggerComboCommand(package, commandService);
         }
 
         /// <summary>
@@ -83,11 +87,18 @@ namespace SboxTools.Console.Toolbar
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            OleMenuCmdEventArgs oOleMenuCmdEventArgs = (OleMenuCmdEventArgs)e;
+            string newChoice = oOleMenuCmdEventArgs.InValue as string;
 
-            Button.Checked = !Button.Checked;
-
-            ConsoleWindow.Instance.ApplyFilters();
+            if (oOleMenuCmdEventArgs.OutValue != IntPtr.Zero)
+            {
+                Marshal.GetNativeVariantForObject(CurrentChoice, oOleMenuCmdEventArgs.OutValue);
+            }
+            else if (newChoice != null)
+            {
+                CurrentChoice = newChoice;
+                ConsoleWindow.Instance.ApplyFilters();
+            }
         }
     }
 }

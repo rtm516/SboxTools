@@ -13,7 +13,10 @@ namespace SboxTools.Types
 		public string Stack { get; set; }
 		
 		public DateTimeOffset Time { get; set; }
-		
+
+		// Added for extension usage
+        public DateTime TimeStamp { get; set; }
+
 		public bool HasStack
 		{
 			get

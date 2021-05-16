@@ -45,6 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Console\Toolbar\LoggerComboListCommand.cs" />
+    <Compile Include="Console\Toolbar\LoggerComboCommand.cs" />
     <Compile Include="Console\Toolbar\ToggleTraceCommand.cs" />
     <Compile Include="Console\Toolbar\ToggleInfoCommand.cs" />
     <Compile Include="Console\Toolbar\ToggleWarnCommand.cs" />
@@ -61,6 +63,7 @@
     </Compile>
     <Compile Include="SboxToolsPackage.cs" />
     <Compile Include="Types\ConsoleOutput.cs" />
+    <Compile Include="Types\Logs.cs" />
     <Compile Include="Types\Output.cs" />
   </ItemGroup>
   <ItemGroup>

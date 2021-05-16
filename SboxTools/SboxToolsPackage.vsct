@@ -79,6 +79,16 @@
 			</Button>
 		</Buttons>
 
+		<Combos>
+			<Combo guid="guidSboxToolsPackageCmdSet" id="SboxConsoleLoggerComboId" priority="0x0100" type="DropDownCombo" defaultWidth="130" idCommandList="SboxConsoleLoggerComboListId">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="ToolbarLoggerGroup"/>
+				<CommandFlag>IconAndText</CommandFlag>
+				<Strings>
+					<ButtonText>Logger:</ButtonText>
+				</Strings>
+			</Combo>
+		</Combos>
+
 		<Bitmaps>
 			<Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpSbox, bmpOn, bmpOff" />
 		</Bitmaps>
@@ -109,6 +119,9 @@
 			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarTraceGroup" priority="0x0000">
 				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
 			</Group>
+			<Group guid="guidSboxToolsPackageCmdSet" id="ToolbarLoggerGroup" priority="0x0000">
+				<Parent guid="guidSboxToolsPackageCmdSet" id="SboxConsoleToolbar" />
+			</Group>
 		</Groups>
 	</Commands>
 
@@ -124,6 +137,8 @@
 			<IDSymbol name="SboxConsoleWarnCommandId" value="0x0104" />
 			<IDSymbol name="SboxConsoleInfoCommandId" value="0x0105" />
 			<IDSymbol name="SboxConsoleTraceCommandId" value="0x0106" />
+			<IDSymbol name="SboxConsoleLoggerComboId" value="0x0107" />
+			<IDSymbol name="SboxConsoleLoggerComboListId" value="0x0108" />
 
 			<IDSymbol name="SboxConsoleToolbar" value="0x1000" />
 			<IDSymbol name="ToolbarConnectionGroup" value="0x1050" />
@@ -131,6 +146,7 @@
 			<IDSymbol name="ToolbarWarnGroup" value="0x1052" />
 			<IDSymbol name="ToolbarInfoGroup" value="0x1053" />
 			<IDSymbol name="ToolbarTraceGroup" value="0x1054" />
+			<IDSymbol name="ToolbarLoggerGroup" value="0x1055" />
 		</GuidSymbol>
 
 		<GuidSymbol name="guidImages" value="{8930bbf9-09dc-4a91-9d44-12ed7535a845}">

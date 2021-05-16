@@ -30,11 +30,13 @@ namespace SboxTools.Console
     public class ConsoleWindow : ToolWindowPane
     {
         public static ConsoleWindow Instance { get; private set; }
+        public StackPanel LogPanel { get; }
+        public Logs Logs { get; }
 
         private ClientWebSocket WebSocket;
         private ConsoleWindowControl WindowControl;
         private ScrollViewer LogScroll;
-        public StackPanel LogPanel;
+
 
         public bool IsConnected
         {
@@ -57,6 +59,8 @@ namespace SboxTools.Console
 
             LogScroll = WindowControl.FindName("LogScroll") as ScrollViewer;
             LogPanel = WindowControl.FindName("LogPanel") as StackPanel;
+
+            Logs = new Logs();
         }
 
         public void Connect()
@@ -115,13 +119,15 @@ namespace SboxTools.Console
             if (output.Type == "ConsoleOutput")
             {
                 ConsoleOutput consoleOutput = JsonConvert.DeserializeObject<ConsoleOutput>(output.Data);
-                AddLine(consoleOutput, DateTime.Now);
+                consoleOutput.TimeStamp = DateTime.Now;
+                AddLine(consoleOutput);
             }
         }
 
-        // TODO: Remove these extra args as its super messy
-        private void AddLine(ConsoleOutput consoleOutput, DateTime now)
+        private void AddLine(ConsoleOutput consoleOutput)
         {
+            Logs.AddLine(consoleOutput);
+
             // Run back on UI thread
             ThreadHelper.JoinableTaskFactory.Run(async delegate {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -132,30 +138,10 @@ namespace SboxTools.Console
                 row.DataContext = consoleOutput;
 
                 // Change visibility based on active filters
-                bool visible = true;
-                switch (consoleOutput.Level)
-                {
-                    case "error":
-                        visible = ToggleErrorCommand.Instance.Button.Checked;
-                        break;
-
-                    case "warn":
-                        visible = ToggleWarnCommand.Instance.Button.Checked;
-                        break;
-
-                    case "info":
-                        visible = ToggleInfoCommand.Instance.Button.Checked;
-                        break;
-
-                    case "trace":
-                        visible = ToggleTraceCommand.Instance.Button.Checked;
-                        break;
-                }
-
-                row.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                row.Visibility = ShouldFilter(consoleOutput) ? Visibility.Visible : Visibility.Collapsed;
 
                 TextBlock timeText = new TextBlock();
-                timeText.Text = now.ToString("HH:mm:ss");
+                timeText.Text = consoleOutput.TimeStamp.ToString("HH:mm:ss");
                 timeText.Style = (Style) WindowControl.Resources["TextBlockTime"];
                 row.Children.Add(timeText);
 
@@ -178,6 +164,44 @@ namespace SboxTools.Console
                     LogScroll.ScrollToEnd();
                 }
             });
+        }
+
+        public void ApplyFilters()
+        {
+            foreach (DockPanel logLine in LogPanel.Children)
+            {
+                logLine.Visibility = ShouldFilter((ConsoleOutput)logLine.DataContext) ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public static bool ShouldFilter(ConsoleOutput consoleOutput)
+        {
+            bool visible = true;
+            switch (consoleOutput.Level)
+            {
+                case "error":
+                    visible = ToggleErrorCommand.Instance.Button.Checked;
+                    break;
+
+                case "warn":
+                    visible = ToggleWarnCommand.Instance.Button.Checked;
+                    break;
+
+                case "info":
+                    visible = ToggleInfoCommand.Instance.Button.Checked;
+                    break;
+
+                case "trace":
+                    visible = ToggleTraceCommand.Instance.Button.Checked;
+                    break;
+            }
+
+            if (visible && LoggerComboCommand.Instance.CurrentChoice != "All")
+            {
+                visible = consoleOutput.Logger == LoggerComboCommand.Instance.CurrentChoice;
+            }
+
+            return visible;
         }
     }
 }
